@@ -147,8 +147,8 @@
     }
 
     .locked-val {
-      color: transparent; /* Makes text inherently invisible */
-      text-shadow: 0 0 10px var(--text-main); /* Creates a native blur effect */
+      color: transparent; 
+      text-shadow: 0 0 10px var(--text-main); 
       user-select: none;
     }
 
@@ -359,11 +359,19 @@
         document.getElementById('lbl-height').innerText = 'Height (in)';
         wInput.value = Math.round(wInput.value * 2.20462) || 132;
         hInput.value = Math.round(hInput.value / 2.54) || 67;
+
+        // Dynamic Bounds Update
+        wInput.min = 50; wInput.max = 800;
+        hInput.min = 36; hInput.max = 96;
       } else {
         document.getElementById('lbl-weight').innerText = 'Weight (kg)';
         document.getElementById('lbl-height').innerText = 'Height (cm)';
         wInput.value = Math.round(wInput.value / 2.20462) || 60;
         hInput.value = Math.round(hInput.value * 2.54) || 170;
+
+        // Dynamic Bounds Update
+        wInput.min = 22; wInput.max = 360;
+        hInput.min = 90; hInput.max = 245;
       }
     }
 
