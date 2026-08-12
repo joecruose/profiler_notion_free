@@ -3,136 +3,195 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notion Health Calculator | Free</title>
+  <title>Health Profiler Pro | Studio</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* DEFAULT MONOCHROME VARIABLES */
+    /* STUDIO UI VARIABLES */
     :root {
-      --page-bg: transparent; 
-      --block-bg: #55534e; 
-      --block-border: #4a4843;
-      --text-main: #FFFFFF;
-      --text-muted: rgba(255, 255, 255, 0.65);
+      --bg-main: #FFFFFF;
+      --bg-secondary: #F7F7F5;
+      --text-main: #272727;
+      --text-muted: #808080;
+      --border-color: #E5E5E5;
+      --hover-color: #F1F1EF;
+      --accent: #272727;
+      --accent-text: #FFFFFF;
+      --preview-bg: #FFFFFF;
+      --transition-smooth: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body.dark-mode {
+      --bg-main: #191919;
+      --bg-secondary: #111111;
+      --text-main: #EDEDED;
+      --text-muted: #A0A0A0;
+      --border-color: #3F3F3F;
+      --hover-color: #333333;
       --accent: #FFFFFF;
-      --accent-text: #55534e;
-      --font-ui: 'Inter', -apple-system, sans-serif;
+      --accent-text: #191919;
+      --preview-bg: #191919;
     }
 
     * { box-sizing: border-box; }
 
-    html, body {
-      margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
-      background-color: var(--page-bg); display: flex; justify-content: center;
-      align-items: center; font-family: var(--font-ui); -webkit-font-smoothing: antialiased;
-      transition: background-color 0.3s ease;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      transition: background-color var(--transition-smooth), color var(--transition-smooth);
+      -webkit-font-smoothing: antialiased;
+      padding: 40px 20px;
     }
 
+    .container {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* HEADER */
+    .header-row {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+    }
+
+    h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+
+    .icon-btn {
+      background: transparent; border: 1px solid transparent; color: var(--text-muted);
+      cursor: pointer; padding: 6px; border-radius: 6px; display: flex;
+      align-items: center; justify-content: center; transition: all var(--transition-smooth);
+    }
+    .icon-btn:hover { background: var(--hover-color); color: var(--text-main); }
+    .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* LEFT PANEL: CONTROLS */
+    .controls-panel { display: flex; flex-direction: column; gap: 24px; }
+
+    .control-group { display: flex; flex-direction: column; gap: 12px; }
+    .group-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+
+    .property-row { display: flex; align-items: center; justify-content: space-between; }
+    .property-label { font-size: 14px; color: var(--text-main); font-weight: 500; }
+    .property-input-group { display: flex; align-items: center; gap: 12px; }
+
+    .hex-wrapper {
+      display: flex; align-items: center; background: var(--bg-secondary);
+      border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 10px; width: 86px;
+    }
+    .hex-wrapper:focus-within { border-color: var(--text-muted); }
+    .hex-hash { color: var(--text-muted); font-family: ui-monospace, monospace; font-size: 13px; user-select: none; }
+    .hex-input {
+      font-family: ui-monospace, monospace; font-size: 13px; color: var(--text-main);
+      background: transparent; border: none; outline: none; width: 100%; padding: 0 0 0 2px; text-transform: uppercase;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+      width: 30px; height: 30px; background-color: transparent; padding: 0;
+      cursor: pointer; border-radius: 6px; overflow: hidden; border: 1px solid rgba(128, 128, 128, 0.35);
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: none; border-radius: 5px; }
+    input[type="color"]::-moz-color-swatch { border: none; border-radius: 5px; }
+
+    .number-input, .select-input {
+      font-family: ui-monospace, monospace; font-size: 13px; color: var(--text-main);
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px;
+      padding: 6px 10px; text-align: center; outline: none; transition: all var(--transition-smooth);
+    }
+    .select-input { cursor: pointer; text-align: left; }
+    .number-input:focus, .select-input:focus { border-color: var(--text-muted); }
+
+    hr { border: none; border-top: 1px solid var(--border-color); margin: 0; transition: border-color var(--transition-smooth); }
+
+    /* OUTPUT SECTION */
+    .output-section p { font-size: 13px; color: var(--text-muted); margin: 0 0 8px 0; font-weight: 500; }
+    .link-box {
+      width: 100%; padding: 10px 12px; font-size: 12px; color: var(--text-main);
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px;
+      outline: none; font-family: ui-monospace, monospace; margin-bottom: 12px;
+      transition: background-color 0.2s ease;
+    }
+    .btn-copy {
+      width: 100%; background: var(--accent); color: var(--accent-text); border: none;
+      padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s ease, opacity 0.2s;
+    }
+    .btn-copy:hover { opacity: 0.9; }
+    .btn-copy:active { transform: scale(0.98); }
+    .btn-copy svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    /* RIGHT PANEL: PREVIEW ENVIRONMENT */
+    .preview-panel {
+      background-color: var(--preview-bg); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 40px; display: flex; justify-content: center; align-items: center;
+      background-image: radial-gradient(var(--border-color) 1px, transparent 0); background-size: 24px 24px;
+      background-position: center; min-height: 400px; transition: background-color var(--transition-smooth);
+    }
+
+    /* INJECTED HEALTH PROFILER CSS */
     .widget-block {
-      background-color: var(--block-bg); 
-      border-radius: 24px; padding: 20px; display: flex; flex-direction: column;
-      width: 320px; height: 410px; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      border: 1px solid var(--block-border);
-      position: relative; overflow: hidden;
-      transition: all 0.3s ease;
+      --block-bg: #252423; --block-border: #333333; 
+      --text-main: #FFFFFF; --text-muted: rgba(255, 255, 255, 0.4); 
+      --accent: #FFFFFF; --accent-text: #252423;
+      --font-ui: 'Inter', -apple-system, sans-serif;
+      
+      background-color: var(--block-bg); border-radius: 24px; padding: 20px; 
+      display: flex; flex-direction: column; width: 320px; height: 410px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2); border: 1px solid var(--block-border);
+      position: relative; overflow: hidden; font-family: var(--font-ui);
+      transition: all var(--transition-smooth);
     }
-
-    /* HEADER & TOGGLE */
-    .header {
-      font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 12px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .unit-tabs {
-      position: relative; display: flex; 
-      background: color-mix(in srgb, var(--text-main) 12%, transparent);
-      padding: 4px; border-radius: 12px; width: 110px;
-    }
-
-    .unit-indicator {
-      position: absolute; top: 4px; bottom: 4px; width: calc(50% - 4px);
-      background: var(--text-main); border-radius: 8px;
-      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); z-index: 0;
-    }
-
-    .unit-btn {
-      flex: 1; position: relative; z-index: 1; background: transparent; border: none;
-      color: var(--text-muted); padding: 4px 0; font-family: var(--font-ui);
-      font-size: 11px; font-weight: 700; cursor: pointer; transition: color 0.3s ease;
-      text-transform: uppercase;
-    }
-
+    
+    .widget-block * { transition: background-color var(--transition-smooth), color var(--transition-smooth), border-color var(--transition-smooth); }
+    
+    .header { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .unit-tabs { position: relative; display: flex; background: color-mix(in srgb, var(--text-main) 12%, transparent); padding: 4px; border-radius: 12px; width: 110px; }
+    .unit-indicator { position: absolute; top: 4px; bottom: 4px; width: calc(50% - 4px); background: var(--text-main); border-radius: 8px; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); z-index: 0; }
+    .unit-btn { flex: 1; position: relative; z-index: 1; background: transparent; border: none; color: var(--text-muted); padding: 4px 0; font-family: var(--font-ui); font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: color 0.3s ease; }
     .unit-btn:hover { color: color-mix(in srgb, var(--text-main) 80%, transparent); }
-    .unit-btn.active { color: var(--accent-text); cursor: default; }
-
-    /* FORM STYLES */
-    #form-view {
-      display: flex; flex-direction: column; gap: 9px; height: 100%;
-      animation: fadeUp 0.3s ease forwards;
-    }
-
+    .unit-btn.active { color: var(--accent-text); cursor: default;}
+    
+    #preview-form-view { display: flex; flex-direction: column; gap: 9px; height: 100%; animation: fadeUp 0.3s ease forwards; }
     .input-group { display: flex; flex-direction: column; gap: 4px; }
     .row { display: flex; gap: 10px; width: 100%; }
     .row .input-group { flex: 1; }
-
     label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-
-    input, select {
-      background: color-mix(in srgb, var(--text-main) 6%, transparent); border: 1px solid transparent;
-      color: var(--text-main); border-radius: 10px; padding: 8px 12px;
-      font-family: inherit; font-size: 13px; font-weight: 600; width: 100%;
-      transition: all 0.2s ease; outline: none;
-    }
-
-    input:focus, select:focus { 
-      border-color: color-mix(in srgb, var(--text-main) 15%, transparent); 
-      background: color-mix(in srgb, var(--text-main) 10%, transparent); 
-    }
     
-    select { 
-      appearance: none; 
-      cursor: pointer; 
-      color-scheme: light;
-    }
+    .widget-input, .widget-select { background: color-mix(in srgb, var(--text-main) 6%, transparent); border: 1px solid transparent; color: var(--text-main); border-radius: 10px; padding: 8px 12px; font-family: inherit; font-size: 13px; font-weight: 600; width: 100%; outline: none; transition: all 0.2s ease; }
+    .widget-input:focus, .widget-select:focus { border-color: color-mix(in srgb, var(--text-main) 15%, transparent); background: color-mix(in srgb, var(--text-main) 10%, transparent); }
+    .widget-select { appearance: none; cursor: pointer; color-scheme: light; }
+    .widget-select option { background-color: #FFFFFF; color: #252423; font-weight: 600; }
     
-    select option {
-      background-color: #FFFFFF;
-      color: #272727;
-      font-weight: 600;
-    }
-
-    .calc-btn {
-      margin-top: auto; background: var(--accent); color: var(--accent-text); 
-      border: none; padding: 11px; border-radius: 12px; font-size: 14px; font-weight: 700;
-      cursor: pointer; transition: transform 0.15s ease, opacity 0.2s ease;
-    }
+    .calc-btn { margin-top: auto; background: var(--accent); color: var(--accent-text); border: none; padding: 11px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.15s ease, opacity 0.2s ease; }
     .calc-btn:active { transform: scale(0.96); }
     .calc-btn:hover { opacity: 0.9; }
 
-    /* RESULTS VIEW */
-    #results-view {
-      display: none; flex-direction: column; gap: 10px; height: 100%;
-      animation: fadeUp 0.3s ease forwards;
-    }
-
-    .btn-icon-back {
-      background: color-mix(in srgb, var(--text-main) 6%, transparent); border: none; color: var(--text-main);
-      width: 32px; height: 32px; border-radius: 50%; display: flex;
-      align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
-    }
+    /* Results Dashboard Elements */
+    .btn-icon-back { background: color-mix(in srgb, var(--text-main) 6%, transparent); border: none; color: var(--text-main); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
     .btn-icon-back:hover { background: color-mix(in srgb, var(--text-main) 15%, transparent); }
     .btn-icon-back svg { width: 14px; height: 14px; fill: currentColor; }
 
-    .macros-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; flex: 1; position: relative; }
-    
-    .macro-box {
-      background: color-mix(in srgb, var(--text-main) 4%, transparent); border-radius: 12px; padding: 10px 12px;
-      display: flex; flex-direction: column; gap: 2px; justify-content: center;
-    }
+    .macros-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; flex: 1; }
+    .macro-box { background: color-mix(in srgb, var(--text-main) 4%, transparent); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; justify-content: center; }
     .macro-box.primary { grid-column: span 2; background: color-mix(in srgb, var(--text-main) 8%, transparent); flex-direction: row; align-items: center; justify-content: space-between; }
     
     .m-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
@@ -140,239 +199,293 @@
     .m-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; }
     .primary .m-val { font-size: 24px; }
 
-    /* BLURRED PAYWALL CONTAINER FOR MACROS */
-    .paywall-section {
-      grid-column: span 2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
-      position: relative; border-radius: 12px; overflow: hidden;
-    }
-
-    .paywall-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: color-mix(in srgb, var(--block-bg) 65%, transparent);
-      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      color: var(--text-main); font-size: 12px; font-weight: 700;
-      text-decoration: none; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--text-main) 20%, transparent);
-      transition: all 0.2s ease; cursor: pointer; z-index: 10;
-      padding: 8px 12px; text-align: center;
-    }
-
-    .paywall-overlay:hover {
-      background: color-mix(in srgb, var(--block-bg) 50%, transparent);
-      border-color: var(--text-main);
-      transform: scale(0.99);
-    }
-
-    .paywall-overlay svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
-
     @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* CREATOR FOOTER */
+    .creator-footer { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid var(--border-color); margin-top: 16px; }
+    .creator-info { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .creator-logo { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background-color: var(--border-color); }
+    .creator-links { display: flex; gap: 14px; align-items: center; }
+    .creator-links a { color: var(--text-muted); transition: color var(--transition-smooth); display: flex; align-items: center; }
+    .creator-links a:hover { color: var(--text-main); }
+    .creator-links svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .youtube-icon { fill: currentColor; stroke: none; }
+
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; gap: 24px; }
+      .preview-panel { order: -1; padding: 20px; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="widget-block">
-    
-    <!-- INPUT FORM -->
-    <div id="form-view">
-      <div class="header">
-        Health Profiler
-        <div class="unit-tabs">
-          <div class="unit-indicator" id="unit-slider"></div>
-          <button class="unit-btn active" id="btn-imp" onclick="setUnit('imp', 0)">US</button>
-          <button class="unit-btn" id="btn-met" onclick="setUnit('met', 1)">Metric</button>
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="input-group">
-          <label>Gender</label>
-          <select id="gender">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <label>Age</label>
-          <input type="number" id="age" value="22" min="15" max="100">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="input-group">
-          <label id="lbl-weight">Weight (lbs)</label>
-          <input type="number" id="weight" value="132" min="30" max="600">
-        </div>
-        <div class="input-group">
-          <label id="lbl-height">Height (in)</label>
-          <input type="number" id="height" value="67" min="40" max="100">
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label>Activity Level</label>
-        <select id="activity">
-          <option value="1.2">Sedentary (Little to no exercise)</option>
-          <option value="1.375">Lightly Active (1–2 days per week)</option>
-          <option value="1.55" selected>Moderately Active (3–5 days per week)</option>
-          <option value="1.725">Very Active (6–7 days per week)</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>Fitness Goal</label>
-        <select id="goal">
-          <option value="maintain" selected>Maintain Weight</option>
-          <option value="cut">Fat Loss (Cut)</option>
-          <option value="bulk">Muscle Gain (Bulk)</option>
-        </select>
-      </div>
-
-      <button class="calc-btn" onclick="calculate()">Generate Profile</button>
+  <div class="container">
+    <div class="header-row">
+      <h1>Health Profiler Studio</h1>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+        <svg id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
     </div>
 
-    <!-- RESULTS DASHBOARD -->
-    <div id="results-view">
-      <div class="header" style="margin-bottom: 4px;">
-        <button class="btn-icon-back" onclick="goBack()" aria-label="Back">
-          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-        </button>
-        <span>Your Targets</span>
+    <div class="controls-panel">
+      
+      <div class="control-group">
+        <span class="group-title">Colors</span>
+        <div class="property-row">
+          <div class="property-label">Widget Color</div>
+          <div class="property-input-group">
+            <div class="hex-wrapper">
+              <span class="hex-hash">#</span>
+              <input type="text" class="hex-input" id="bg-text" value="252423" maxlength="6">
+            </div>
+            <input type="color" id="bg-picker" value="#252423">
+          </div>
+        </div>
+
+        <div class="property-row">
+          <div class="property-label">Text & Accent</div>
+          <div class="property-input-group">
+            <div class="hex-wrapper">
+              <span class="hex-hash">#</span>
+              <input type="text" class="hex-input" id="text-text" value="FFFFFF" maxlength="6">
+            </div>
+            <input type="color" id="text-picker" value="#ffffff">
+          </div>
+        </div>
       </div>
 
-      <div class="macros-grid">
-        <div class="macro-box primary">
-          <div style="display:flex; flex-direction:column;">
-            <span class="m-label" id="res-cal-label">Calorie Target</span>
-            <span class="m-sub" id="res-cal-sub">Daily Calories</span>
+      <hr>
+
+      <div class="control-group">
+        <span class="group-title">Default Settings</span>
+        <div class="property-row">
+          <div class="property-label">Default Unit</div>
+          <select id="default-unit" class="select-input" style="width: auto;" onchange="updateWidget('unit')">
+            <option value="imp">US (Imperial)</option>
+            <option value="met">Metric</option>
+          </select>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="output-section">
+        <p>Encrypted Embed Link</p>
+        <input type="text" id="final-url" class="link-box" readonly>
+        <button class="btn-copy" id="copy-btn" onclick="copyLink()">
+          <svg id="copy-icon" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="copy-text">Copy Link</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="preview-panel">
+      
+      <!-- WIDGET PREVIEW HTML -->
+      <div class="widget-block" id="widget-preview">
+        
+        <!-- INPUT FORM -->
+        <div id="preview-form-view">
+          <div class="header">
+            Health Profiler
+            <div class="unit-tabs">
+              <div class="unit-indicator" id="preview-unit-slider" style="transform: translateX(0%);"></div>
+              <button class="unit-btn active" id="btn-imp" onclick="previewSetUnit('imp', 0)">US</button>
+              <button class="unit-btn" id="btn-met" onclick="previewSetUnit('met', 1)">Metric</button>
+            </div>
           </div>
-          <span class="m-val" id="res-tdee">0</span>
+          
+          <div class="row">
+            <div class="input-group">
+              <label>Gender</label>
+              <select class="widget-select" id="preview-gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Age</label>
+              <input type="number" class="widget-input" id="preview-age" value="22" min="15" max="100">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-group">
+              <label id="preview-lbl-weight">Weight (lbs)</label>
+              <input type="number" class="widget-input" id="preview-weight" value="132" min="30" max="600">
+            </div>
+            <div class="input-group">
+              <label id="preview-lbl-height">Height (in)</label>
+              <input type="number" class="widget-input" id="preview-height" value="67" min="40" max="100">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Activity Level</label>
+            <select class="widget-select" id="preview-activity">
+              <option value="1.2">Sedentary (Little to no exercise)</option>
+              <option value="1.375">Lightly Active (1–2 days per week)</option>
+              <option value="1.55" selected>Moderately Active (3–5 days per week)</option>
+              <option value="1.725">Very Active (6–7 days per week)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Fitness Goal</label>
+            <select class="widget-select" id="preview-goal">
+              <option value="maintain" selected>Maintain Weight</option>
+              <option value="cut">Fat Loss (Cut)</option>
+              <option value="bulk">Muscle Gain (Bulk)</option>
+            </select>
+          </div>
+
+          <button class="calc-btn" onclick="previewCalculate()">Generate Profile</button>
         </div>
 
-        <div class="macro-box">
-          <span class="m-label">BMI Score</span>
-          <span class="m-val" id="res-bmi">0.0</span>
-          <span class="m-sub" id="res-bmi-cat">Normal</span>
-        </div>
-
-        <div class="macro-box">
-          <span class="m-label">Water Target</span>
-          <span class="m-val" id="res-water">0</span>
-          <span class="m-sub" id="res-water-sub">Daily Intake</span>
-        </div>
-
-        <!-- PAYWALLED MACRO BREAKDOWN -->
-        <div class="paywall-section">
-          <div class="macro-box">
-            <span class="m-label">Protein</span>
-            <span class="m-val">125g</span>
-          </div>
-          <div class="macro-box">
-            <span class="m-label">Fats</span>
-            <span class="m-val">55g</span>
-          </div>
-          <div class="macro-box primary" style="grid-column: span 2; padding: 10px 12px;">
-            <span class="m-label">Carbs</span>
-            <span class="m-val" style="font-size: 18px;">210g</span>
+        <!-- RESULTS DASHBOARD -->
+        <div id="preview-results-view" style="display: none; flex-direction: column; gap: 10px; height: 100%; animation: fadeUp 0.3s ease forwards;">
+          <div class="header" style="margin-bottom: 4px;">
+            <button class="btn-icon-back" onclick="previewGoBack()" aria-label="Back">
+              <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+            <span>Your Targets</span>
           </div>
 
-          <a href="https://joecruose.gumroad.com/l/profiler_widget" target="_blank" class="paywall-overlay" title="Unlock Macro Breakdown in Pro">
-            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-            <span>Unlock Macros in Pro</span>
-          </a>
+          <div class="macros-grid">
+            <div class="macro-box primary">
+              <div style="display:flex; flex-direction:column;">
+                <span class="m-label" id="preview-res-cal-label">Calorie Target</span>
+                <span class="m-sub" id="preview-res-cal-sub">Daily Calories</span>
+              </div>
+              <span class="m-val" id="preview-res-tdee">0</span>
+            </div>
+
+            <div class="macro-box">
+              <span class="m-label">BMI Score</span>
+              <span class="m-val" id="preview-res-bmi">0.0</span>
+              <span class="m-sub" id="preview-res-bmi-cat">Normal</span>
+            </div>
+
+            <div class="macro-box">
+              <span class="m-label">Water Target</span>
+              <span class="m-val" id="preview-res-water">0</span>
+              <span class="m-sub" id="preview-res-water-sub">Daily Intake</span>
+            </div>
+
+            <div class="macro-box">
+              <span class="m-label">Protein</span>
+              <span class="m-val" id="preview-res-pro">0g</span>
+            </div>
+            <div class="macro-box">
+              <span class="m-label">Fats</span>
+              <span class="m-val" id="preview-res-fat">0g</span>
+            </div>
+            <div class="macro-box primary" style="padding: 10px 12px;">
+              <span class="m-label">Carbs</span>
+              <span class="m-val" id="preview-res-carb" style="font-size: 18px;">0g</span>
+            </div>
+          </div>
         </div>
 
+      </div>
+
+    </div>
+
+    <div class="creator-footer">
+      <div class="creator-info">
+        <img src="https://raw.githubusercontent.com/joecruose/flipclock_notion_v2pro/main/JoeCruoseLogo.png" alt="Joe Cruose" class="creator-logo">
+        <span>Crafted by Joe Cruose</span>
+      </div>
+      <div class="creator-links">
+        <a href="https://youtube.com/@JoeCruose" target="_blank" aria-label="Setup Tutorial">
+          <svg class="youtube-icon" viewBox="0 0 24 24">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
+            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="var(--bg-main)"></polygon>
+          </svg>
+        </a>
+        <a href="https://joecruose.gumroad.com/" target="_blank" aria-label="Template Store">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+        </a>
       </div>
     </div>
 
   </div>
 
   <script>
-    const notionColors = [
-      { l: '55534e', d: 'd4d4d4' },
-      { l: 'a6a299', d: '7f7f7f' },
-      { l: '9f6b53', d: 'ac775f' },
-      { l: 'cb912f', d: 'c98c1d' },
-      { l: 'd9730d', d: 'd9771e' },
-      { l: '448361', d: '2a9961' },
-      { l: '337ea9', d: '277be5' },
-      { l: '9065b0', d: '8f5cc1' },
-      { l: 'c14c8a', d: 'c74177' },
-      { l: 'd44c47', d: 'cc4745' }
-    ];
+    const BASE_URL = "https://joecruose.github.io/profiler_notion_pro/";
 
-    let currentUnit = 'imp';
+    // DOM Elements
+    const bgPicker = document.getElementById('bg-picker');
+    const textPicker = document.getElementById('text-picker');
+    const bgTextInput = document.getElementById('bg-text');
+    const textTextInput = document.getElementById('text-text');
+    const defaultUnitSelect = document.getElementById('default-unit');
+    const finalUrlInput = document.getElementById('final-url');
+    const widgetPreview = document.getElementById('widget-preview');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyText = document.getElementById('copy-text');
+    const copyIcon = document.getElementById('copy-icon');
+    
+    // Preview Elements & Logic
+    const previewUnitSlider = document.getElementById('preview-unit-slider');
+    let isDark = false;
+    let previewCurrentUnit = 'imp';
 
-    /* --- DECODING & INJECTION --- */
-    function initializeWidget() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const t = parseInt(urlParams.get('t')); 
-      const m = urlParams.get('m'); 
-      const c = urlParams.get('c'); 
-      const u = urlParams.get('u'); 
+    // SVG Icons
+    const moonSVG = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    const sunSVG = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+    const checkSVG = '<polyline points="20 6 9 17 4 12"></polyline>';
+    const defaultCopySVG = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
 
-      const root = document.documentElement;
+    // Color Mixing Utility
+    function mixWithText(hexBg, hexText, percentage) { return `color-mix(in srgb, ${hexText} ${percentage}%, ${hexBg})`; }
+    function mixWithTransparent(hexText, percentage) { return `color-mix(in srgb, ${hexText} ${percentage}%, transparent)`; }
 
-      if (!isNaN(t) && t >= 0 && t < notionColors.length) {
-        const hex = m === 'd' ? notionColors[t].d : notionColors[t].l;
-        const textHex = c === 'b' ? '272727' : 'FFFFFF';
-        
-        root.style.setProperty('--block-bg', `#${hex}`);
-        root.style.setProperty('--text-main', `#${textHex}`);
-        root.style.setProperty('--accent', `#${textHex}`);
-        root.style.setProperty('--accent-text', `#${hex}`);
-        root.style.setProperty('--text-muted', `color-mix(in srgb, #${textHex} 65%, transparent)`);
-        root.style.setProperty('--block-border', `color-mix(in srgb, #${textHex} 15%, #${hex})`);
-      }
-
-      if (m === 'd') {
-        root.style.setProperty('--page-bg', '#191919');
-      } else {
-        root.style.setProperty('--page-bg', 'transparent');
-      }
-
-      if (u === 'met') {
-        setUnit('met', 1);
-      }
-    }
-
-    function setUnit(unit, index) {
-      if (currentUnit === unit && document.getElementById(`btn-${unit}`).classList.contains('active')) return;
-      currentUnit = unit;
+    // Preview Logic Handlers
+    function previewSetUnit(unit, index) {
+      previewCurrentUnit = unit;
       
-      document.getElementById('unit-slider').style.transform = `translateX(${index * 100}%)`;
+      document.getElementById('preview-unit-slider').style.transform = `translateX(${index * 100}%)`;
       document.getElementById('btn-imp').classList.remove('active');
       document.getElementById('btn-met').classList.remove('active');
       document.getElementById(`btn-${unit}`).classList.add('active');
 
-      const wInput = document.getElementById('weight');
-      const hInput = document.getElementById('height');
+      const wInput = document.getElementById('preview-weight');
+      const hInput = document.getElementById('preview-height');
 
       if (unit === 'imp') {
-        document.getElementById('lbl-weight').innerText = 'Weight (lbs)';
-        document.getElementById('lbl-height').innerText = 'Height (in)';
+        document.getElementById('preview-lbl-weight').innerText = 'Weight (lbs)';
+        document.getElementById('preview-lbl-height').innerText = 'Height (in)';
         wInput.value = Math.round(wInput.value * 2.20462) || 132;
         hInput.value = Math.round(hInput.value / 2.54) || 67;
       } else {
-        document.getElementById('lbl-weight').innerText = 'Weight (kg)';
-        document.getElementById('lbl-height').innerText = 'Height (cm)';
+        document.getElementById('preview-lbl-weight').innerText = 'Weight (kg)';
+        document.getElementById('preview-lbl-height').innerText = 'Height (cm)';
         wInput.value = Math.round(wInput.value / 2.20462) || 60;
         hInput.value = Math.round(hInput.value * 2.54) || 170;
       }
     }
 
-    function calculate() {
-      let rawW = parseFloat(document.getElementById('weight').value);
-      let rawH = parseFloat(document.getElementById('height').value);
-      const a = parseInt(document.getElementById('age').value);
-      const g = document.getElementById('gender').value;
-      const act = parseFloat(document.getElementById('activity').value);
-      const goal = document.getElementById('goal').value;
+    function previewCalculate() {
+      let rawW = parseFloat(document.getElementById('preview-weight').value);
+      let rawH = parseFloat(document.getElementById('preview-height').value);
+      const a = parseInt(document.getElementById('preview-age').value);
+      const g = document.getElementById('preview-gender').value;
+      const act = parseFloat(document.getElementById('preview-activity').value);
+      const goal = document.getElementById('preview-goal').value;
 
       if(!rawW || !rawH || !a) return;
 
-      const w = currentUnit === 'imp' ? rawW / 2.20462 : rawW;
-      const h = currentUnit === 'imp' ? rawH * 2.54 : rawH;
+      const w = previewCurrentUnit === 'imp' ? rawW / 2.20462 : rawW;
+      const h = previewCurrentUnit === 'imp' ? rawH * 2.54 : rawH;
 
       const hMeters = h / 100;
       const bmi = (w / (hMeters * hMeters)).toFixed(1);
@@ -397,29 +510,127 @@
         subText = "Muscle Gain Goal";
       }
 
+      const protein = Math.round(w * 2.2); 
+      const fat = Math.round((targetCalories * 0.25) / 9); 
+      const carb = Math.round((targetCalories - (protein * 4) - (fat * 9)) / 4);
+
       let waterOutput = "";
-      if (currentUnit === 'imp') {
+      if (previewCurrentUnit === 'imp') {
           waterOutput = Math.round(rawW * 0.6) + " oz";
       } else {
           waterOutput = (w * 0.035).toFixed(1) + " L";
       }
 
-      document.getElementById('res-bmi').innerText = bmi;
-      document.getElementById('res-bmi-cat').innerText = category;
-      document.getElementById('res-cal-sub').innerText = subText;
-      document.getElementById('res-tdee').innerText = targetCalories + " kcal";
-      document.getElementById('res-water').innerText = waterOutput;
+      document.getElementById('preview-res-bmi').innerText = bmi;
+      document.getElementById('preview-res-bmi-cat').innerText = category;
+      document.getElementById('preview-res-cal-sub').innerText = subText;
+      document.getElementById('preview-res-tdee').innerText = targetCalories + " kcal";
+      document.getElementById('preview-res-pro').innerText = protein + "g";
+      document.getElementById('preview-res-fat').innerText = fat + "g";
+      document.getElementById('preview-res-carb').innerText = Math.max(0, carb) + "g";
+      document.getElementById('preview-res-water').innerText = waterOutput;
 
-      document.getElementById('form-view').style.display = 'none';
-      document.getElementById('results-view').style.display = 'flex';
+      document.getElementById('preview-form-view').style.display = 'none';
+      document.getElementById('preview-results-view').style.display = 'flex';
     }
 
-    function goBack() {
-      document.getElementById('results-view').style.display = 'none';
-      document.getElementById('form-view').style.display = 'flex';
+    function previewGoBack() {
+      document.getElementById('preview-results-view').style.display = 'none';
+      document.getElementById('preview-form-view').style.display = 'flex';
     }
 
-    window.addEventListener('DOMContentLoaded', initializeWidget);
+    // Main Update Function
+    function updateWidget(source) {
+      if (source === 'picker') {
+        bgTextInput.value = bgPicker.value.replace('#', '').toUpperCase();
+        textTextInput.value = textPicker.value.replace('#', '').toUpperCase();
+      } else if (source === 'text') {
+        if (bgTextInput.value.length === 6) bgPicker.value = '#' + bgTextInput.value;
+        if (textTextInput.value.length === 6) textPicker.value = '#' + textTextInput.value;
+      }
+
+      const cleanBg = bgTextInput.value.padEnd(6, '0').slice(0, 6);
+      const cleanText = textTextInput.value.padEnd(6, '0').slice(0, 6);
+      const defUnit = defaultUnitSelect.value;
+
+      // Update Live Preview Styling
+      widgetPreview.style.setProperty('--block-bg', `#${cleanBg}`);
+      widgetPreview.style.setProperty('--text-main', `#${cleanText}`);
+      widgetPreview.style.setProperty('--accent', `#${cleanText}`);
+      widgetPreview.style.setProperty('--accent-text', `#${cleanBg}`);
+      widgetPreview.style.setProperty('--text-muted', mixWithTransparent(`#${cleanText}`, 40));
+      widgetPreview.style.setProperty('--block-border', mixWithText(`#${cleanBg}`, `#${cleanText}`, 15));
+
+      // Trigger the unit switch in the preview UI automatically when default unit changes
+      if(source === 'unit' || source === 'init') {
+          if(defUnit === 'imp') {
+              previewSetUnit('imp', 0);
+          } else {
+              previewSetUnit('met', 1);
+          }
+      }
+
+      // Token Obfuscation Logic
+      const obfuscate = (hex) => parseInt(hex, 16).toString(36);
+      const payload = JSON.stringify({ 
+        c1: obfuscate(cleanBg), 
+        c2: obfuscate(cleanText),
+        dm: isDark ? 1 : 0,
+        un: defUnit
+      });
+      
+      const encodedToken = btoa(payload);
+
+      // Update Final Link
+      finalUrlInput.value = `${BASE_URL}?token=${encodedToken}`;
+      copyText.textContent = "Copy Link";
+      copyIcon.innerHTML = defaultCopySVG;
+      
+      if (source === 'theme') {
+        finalUrlInput.style.backgroundColor = 'var(--hover-color)';
+        setTimeout(() => finalUrlInput.style.backgroundColor = 'var(--bg-secondary)', 300);
+      }
+    }
+
+    function handleTextInput(e) {
+      let val = e.target.value.replace(/[^0-9A-Fa-f]/g, '');
+      e.target.value = val.toUpperCase();
+      updateWidget('text');
+    }
+
+    function copyLink() {
+      if (!finalUrlInput.value) return;
+      finalUrlInput.select();
+      document.execCommand('copy');
+      copyText.textContent = "Copied!";
+      copyIcon.innerHTML = checkSVG;
+      setTimeout(() => {
+        copyText.textContent = "Copy Link";
+        copyIcon.innerHTML = defaultCopySVG;
+      }, 2000);
+    }
+
+    function toggleTheme() {
+      isDark = !isDark;
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-icon').innerHTML = sunSVG;
+      } else {
+        document.body.classList.remove('dark-mode');
+        document.getElementById('theme-icon').innerHTML = moonSVG;
+      }
+      updateWidget('theme'); 
+    }
+
+    // Event Listeners
+    bgPicker.addEventListener('input', () => updateWidget('picker'));
+    textPicker.addEventListener('input', () => updateWidget('picker'));
+    bgTextInput.addEventListener('input', handleTextInput);
+    textTextInput.addEventListener('input', handleTextInput);
+
+    // Initial Load
+    updateWidget('init');
   </script>
+
 </body>
 </html>
